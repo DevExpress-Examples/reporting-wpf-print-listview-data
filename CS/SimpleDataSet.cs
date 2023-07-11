@@ -37,7 +37,6 @@ namespace WPFPrintListView
             return ds;
         }
 
-        #region Disable Serialization for Tables and Relations
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public new DataTableCollection Tables
         {
@@ -49,7 +48,6 @@ namespace WPFPrintListView
         {
             get { return base.Relations; }
         }
-        #endregion Disable Serialization for Tables and Relations
     }
 
     [ValueConversion(typeof(DateTime), typeof(String))]
