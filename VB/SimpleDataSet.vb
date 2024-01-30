@@ -1,4 +1,3 @@
-Imports Microsoft.VisualBasic
 Imports System
 Imports System.ComponentModel
 Imports System.Data
@@ -6,69 +5,67 @@ Imports System.Windows
 Imports System.Windows.Data
 
 Namespace WPFPrintListView
-	Public Class SimpleDataSet
-		Inherits DataSet
-		Public Sub New()
-			MyBase.New()
-			Dim table As New DataTable("table")
 
-			DataSetName = "ManualDataSet"
+    Public Class SimpleDataSet
+        Inherits DataSet
 
-			table.Columns.Add("ID", GetType(Int32))
-			table.Columns.Add("MyDateTime", GetType(DateTime))
-			table.Columns.Add("MyRow", GetType(String))
-			table.Columns.Add("MyData", GetType(Double))
-			table.Constraints.Add("IDPK", table.Columns("ID"), True)
+        Public Sub New()
+            MyBase.New()
+            Dim table As DataTable = New DataTable("table")
+            DataSetName = "ManualDataSet"
+            table.Columns.Add("ID", GetType(Integer))
+            table.Columns.Add("MyDateTime", GetType(Date))
+            table.Columns.Add("MyRow", GetType(String))
+            table.Columns.Add("MyData", GetType(Double))
+            table.Constraints.Add("IDPK", table.Columns("ID"), True)
+            Tables.AddRange(New DataTable() {table})
+        End Sub
 
-			Tables.AddRange(New DataTable() { table })
-		End Sub
+        Public Shared Function CreateData() As SimpleDataSet
+            Dim ds As SimpleDataSet = New SimpleDataSet()
+            Dim table As DataTable = ds.Tables("table")
+            Dim rnd As Random = New Random(Date.Now.Millisecond)
+            For i As Integer = 0 To 100 - 1
+                table.Rows.Add(New Object() {i, Date.Today.AddDays(1), If(i Mod 2 = 0, "A", "B"), Math.Round(rnd.NextDouble() * 100, 2)})
+            Next
 
-		Public Shared Function CreateData() As SimpleDataSet
-			Dim ds As New SimpleDataSet()
-			Dim table As DataTable = ds.Tables("table")
+            Return ds
+        End Function
 
-			Dim rnd As New Random(DateTime.Now.Millisecond)
+'#Region "Disable Serialization for Tables and Relations"
+        <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
+        Public Overloads ReadOnly Property Tables As DataTableCollection
+            Get
+                Return MyBase.Tables
+            End Get
+        End Property
 
-			For i As Integer = 0 To 99
-				table.Rows.Add(New Object() { i, DateTime.Today.AddDays(1), (If(i Mod 2 = 0, "A", "B")), Math.Round(rnd.NextDouble() * 100, 2) })
-			Next i
+        <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
+        Public Overloads ReadOnly Property Relations As DataRelationCollection
+            Get
+                Return MyBase.Relations
+            End Get
+        End Property
+'#End Region  ' Disable Serialization for Tables and Relations
+    End Class
 
-			Return ds
-		End Function
+    <ValueConversion(GetType(Date), GetType(String))>
+    Public Class DateConverter
+        Implements IValueConverter
 
-		#Region "Disable Serialization for Tables and Relations"
-		<DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)> _
-		Public Shadows ReadOnly Property Tables() As DataTableCollection
-			Get
-				Return MyBase.Tables
-			End Get
-		End Property
+        Public Function Convert(ByVal value As Object, ByVal targetType As Type, ByVal parameter As Object, ByVal culture As Globalization.CultureInfo) As Object Implements IValueConverter.Convert
+            Dim [date] As Date = CDate(value)
+            Return [date].ToShortDateString()
+        End Function
 
-		<DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)> _
-		Public Shadows ReadOnly Property Relations() As DataRelationCollection
-			Get
-				Return MyBase.Relations
-			End Get
-		End Property
-		#End Region ' Disable Serialization for Tables and Relations
-	End Class
+        Public Function ConvertBack(ByVal value As Object, ByVal targetType As Type, ByVal parameter As Object, ByVal culture As Globalization.CultureInfo) As Object Implements IValueConverter.ConvertBack
+            Dim strValue As String = TryCast(value, String)
+            Dim resultDateTime As Date
+            If Date.TryParse(strValue, resultDateTime) Then
+                Return resultDateTime
+            End If
 
-	<ValueConversion(GetType(DateTime), GetType(String))> _
-	Public Class DateConverter
-		Implements IValueConverter
-		Public Function Convert(ByVal value As Object, ByVal targetType As Type, ByVal parameter As Object, ByVal culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.Convert
-			Dim [date] As DateTime = CDate(value)
-			Return [date].ToShortDateString()
-		End Function
-
-		Public Function ConvertBack(ByVal value As Object, ByVal targetType As Type, ByVal parameter As Object, ByVal culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.ConvertBack
-			Dim strValue As String = TryCast(value, String)
-			Dim resultDateTime As DateTime
-			If DateTime.TryParse(strValue, resultDateTime) Then
-				Return resultDateTime
-			End If
-			Return DependencyProperty.UnsetValue
-		End Function
-	End Class
-
+            Return DependencyProperty.UnsetValue
+        End Function
+    End Class
 End Namespace
