@@ -19,3 +19,7 @@ The data templates in this example are defined for the page header and detail ar
 ## Documentation
 
 - [Printing Custom Reports](https://docs.devexpress.com/WPF/7412/common-concepts/printing-and-exporting/printing-custom-reports)
+
+## More Examples 
+
+- [Reporting for WPF - How to use the CollectionView Link to Print Data](reporting-wpf-use-collectionview-link)
