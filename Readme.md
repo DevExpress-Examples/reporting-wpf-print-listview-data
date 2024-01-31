@@ -22,4 +22,4 @@ The data templates in this example are defined for the page header and detail ar
 
 ## More Examples 
 
-- [Reporting for WPF - How to use the CollectionView Link to Print Data](reporting-wpf-use-collectionview-link)
+- [Reporting for WPF - How to use the CollectionView Link to Print Data](https://github.com/DevExpress-Examples/reporting-wpf-use-collectionview-link)
